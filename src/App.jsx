@@ -86,24 +86,41 @@ const App = () => {
     Obs.unsubscribe();
   }
 
-  // start timer button event
   const onToggleTimerHandler = () => {
     !timerData.isInProgress ? runTimer() : stopTimer();
   };
 
-  // pause timer button event
+
+  let dblClickTimer = 0;
+  let timeoutID = 0;
   const onPauseTimerHandler = () => {
-    if (!timerData.isInProgress)
-      runTimer();
-    if (timerData.isInProgress) {
-      setTimerData((prevData) => {
-        return { ...prevData, isInProgress: false, };
-      });
-      Obs.unsubscribe();
-    };
+    
+    dblClickTimer += 1;
+
+    if (dblClickTimer >= 2) {
+      dblClickTimer = 0;
+      if (!timerData.isInProgress) runTimer();
+      if (timerData.isInProgress) {
+        setTimerData((prevData) => {
+          return { ...prevData, isInProgress: false, };
+        });
+        Obs.unsubscribe();
+      };
+
+      clearTimeout(timeoutID); 
+    }
+    else if (dblClickTimer == 1) {
+       let callBack = function(){ 
+          if (dblClickTimer == 1) {      
+            dblClickTimer = 0;         
+          }
+        };
+        timeoutID = setTimeout(callBack, 320); 
+    }
+    
+    
   };
 
-  // reset timer button event
   const onResetTimerHandler = () => {
     setTimerData(prevData => {
       return {
@@ -129,7 +146,7 @@ const App = () => {
       <button onClick={onToggleTimerHandler}>
         {(timerData.isInProgress) ? 'stop' : 'start'}
       </button>
-      <button onDoubleClick={onPauseTimerHandler}>
+      <button onClick={onPauseTimerHandler}>
         Pause
       </button>
       <button onClick={onResetTimerHandler}>
