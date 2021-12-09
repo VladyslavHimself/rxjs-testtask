@@ -82,7 +82,7 @@ const App = () => {
   }
 
   const stopTimer = () => {
-    setTimerData({ ...stopwatch });
+    setTimerData({ ...stopwatchTemplate });
     Obs.unsubscribe();
   }
 
